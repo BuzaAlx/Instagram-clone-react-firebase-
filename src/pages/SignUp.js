@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.secondary.main,
   },
   form: {
-    width: "100%", // Fix IE 11 issue.
+    width: "100%",
     marginTop: theme.spacing(3),
   },
   submit: {
@@ -45,8 +45,6 @@ function SignUp() {
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
-  const isInvalid = firstName === "" || password === "" || emailAddress === "";
 
   const handleSignup = (e) => {
     e.preventDefault();

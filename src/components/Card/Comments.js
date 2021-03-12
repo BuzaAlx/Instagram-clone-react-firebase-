@@ -143,7 +143,7 @@ function Comments({ postId, user }) {
               value={comment}
               onChange={(e) => setComment(e.target.value)}
             />
-            <AddEmoji />
+            <AddEmoji setComment={setComment} comment={comment} />
           </Box>
           <Button
             variant="outlined"

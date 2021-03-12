@@ -2,15 +2,25 @@ import React, { useState } from "react";
 import { IconButton, Popover } from "@material-ui/core";
 import SentimentSatisfiedRoundedIcon from "@material-ui/icons/SentimentSatisfiedRounded";
 import { makeStyles } from "@material-ui/core/styles";
+import emojis from "../../utils/emojis";
 
 const useStyles = makeStyles((theme) => ({
   smileButton: {
     position: "absolute",
     right: 0,
   },
+  emojiContainer: {
+    fontSize: "20px",
+    display: "flex",
+  },
+  emoji: {
+    display: "block",
+    padding: 10,
+    cursor: "pointer",
+  },
 }));
 
-function AddEmoji() {
+function AddEmoji({ setComment, comment }) {
   const styles = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const handleClick = (event) => {
@@ -21,6 +31,11 @@ function AddEmoji() {
   };
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
+
+  const handlePickEmoji = (em) => {
+    setComment((comment) => (comment += em));
+    setAnchorEl(null);
+  };
 
   return (
     <>
@@ -42,8 +57,18 @@ function AddEmoji() {
           horizontal: "center",
         }}
       >
-        <div style={{ fontSize: "20px", height: "35px" }}>
-          <p>😄 😎 😍 😈</p>
+        <div className={styles.emojiContainer}>
+          {emojis.map((em) => {
+            return (
+              <span
+                key={em.id}
+                className={styles.emoji}
+                onClick={() => handlePickEmoji(em.content)}
+              >
+                {em.content}
+              </span>
+            );
+          })}
         </div>
       </Popover>
     </>

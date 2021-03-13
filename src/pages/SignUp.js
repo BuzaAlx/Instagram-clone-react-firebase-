@@ -48,6 +48,8 @@ function SignUp() {
 
   const handleSignup = (e) => {
     e.preventDefault();
+    let isInvalid = password === "" || emailAddress === "";
+    if (isInvalid) return null;
 
     return auth
       .createUserWithEmailAndPassword(emailAddress, password)

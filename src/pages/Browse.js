@@ -3,8 +3,6 @@ import {
   Container,
   Grid,
   Typography,
-  Input,
-  TextField,
   Avatar,
   Button,
   Box,
@@ -14,7 +12,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import CustomCard from "../components/Card";
 import { useHistory } from "react-router-dom";
 import * as ROUTES from "../constants/routes";
-import ImageUpload from "../components/ImageUpload";
 import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
@@ -43,7 +40,6 @@ const useStyles = makeStyles((theme) => ({
 
 function Browse({ user }) {
   const [posts, setPosts] = useState([]);
-  console.log(user);
   const classes = useStyles();
   const history = useHistory();
 
@@ -89,10 +85,6 @@ function Browse({ user }) {
             </Button>
           </Box>
         </Grid>
-        {/* <ImageUpload
-          username={user && user.displayName}
-          userImg={user && user.photoURL}
-        /> */}
         <Box>
           {posts.map((post) => (
             <CustomCard key={post.id} {...post} user={user} />

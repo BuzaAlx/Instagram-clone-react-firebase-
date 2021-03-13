@@ -35,17 +35,17 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function SignIn() {
-  const classes = useStyles();
-  const history = useHistory();
-
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const isInvalid = password === "" || emailAddress === "";
+  const classes = useStyles();
+  const history = useHistory();
 
   const handleSignin = (e) => {
     e.preventDefault();
+    let isInvalid = password === "" || emailAddress === "";
+    if (isInvalid) return null;
 
     return auth
       .signInWithEmailAndPassword(emailAddress, password)

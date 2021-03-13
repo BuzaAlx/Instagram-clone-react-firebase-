@@ -10,8 +10,6 @@ import {
 } from "@material-ui/core";
 import { storage, db, auth } from "../Firebase";
 
-import firebase from "firebase";
-
 const useStyles = makeStyles((theme) => ({
   large: {
     width: theme.spacing(15),
@@ -19,9 +17,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function userAvatar({ userId, user }) {
-  console.log({ user, userId });
+function UserAvatar({ userId, user }) {
   const [anchorEl, setAnchorEl] = useState(null);
+  const [image, setImage] = useState(null);
+  const [url, setUrl] = useState("");
+  const [avatar, setAvatar] = useState("");
+  const classes = useStyles();
+
   const handleClick = (event) => {
     if (userId !== user.displayName) return;
     setAnchorEl(event.currentTarget);
@@ -29,15 +31,9 @@ function userAvatar({ userId, user }) {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
-
-  const classes = useStyles();
-
-  ////////////////////////////////////////////////
-
-  const [image, setImage] = useState(null);
-  const [url, setUrl] = useState("");
 
   const handleChange = (e) => {
     if (e.target.files[0]) {
@@ -51,18 +47,15 @@ function userAvatar({ userId, user }) {
       "state_changed",
       (snapshot) => {},
       (error) => {
-        // Error function ...
         console.log(error);
       },
       () => {
-        // complete function ...
         storage
           .ref("users")
           .child(image.name)
           .getDownloadURL()
           .then((url) => {
             setUrl(url);
-            //update current user img
             auth.currentUser
               .updateProfile({
                 photoURL: url,
@@ -74,7 +67,6 @@ function userAvatar({ userId, user }) {
                 console.log(error);
               });
 
-            // add new user photo to collection
             db.collection("users")
               .doc("images")
               .set(
@@ -89,9 +81,6 @@ function userAvatar({ userId, user }) {
       }
     );
   };
-
-  /////////////////////////////
-  const [avatar, setAvatar] = useState("");
 
   useEffect(() => {
     db.collection("users")
@@ -163,4 +152,4 @@ function userAvatar({ userId, user }) {
   );
 }
 
-export default userAvatar;
+export default UserAvatar;

@@ -1,14 +1,8 @@
 import React, { useEffect, useState } from "react";
 import GridListTile from "@material-ui/core/GridListTile";
 import GridListTileBar from "@material-ui/core/GridListTileBar";
-
-import {
-  Box,
-  Modal,
-  Typography,
-  Badge,
-  CircularProgress,
-} from "@material-ui/core";
+import { Box, Modal, Typography, Badge } from "@material-ui/core";
+import PropTypes from "prop-types";
 
 import { makeStyles } from "@material-ui/core/styles";
 import moment from "moment";
@@ -70,8 +64,8 @@ const useStyles = makeStyles((theme) => ({
 
 function Image({ post, postId }) {
   const classes = useStyles();
-  const [open, setOpen] = React.useState(false);
-  const [likes, setLikes] = React.useState(null);
+  const [open, setOpen] = useState(false);
+  const [likes, setLikes] = useState(null);
 
   useEffect(() => {
     let unsubscribe;
@@ -140,5 +134,10 @@ function Image({ post, postId }) {
     </>
   );
 }
+
+Image.propTypes = {
+  post: PropTypes.object.isRequired,
+  postId: PropTypes.string.isRequired,
+};
 
 export default Image;

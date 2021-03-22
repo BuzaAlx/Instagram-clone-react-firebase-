@@ -17,6 +17,7 @@ import { Link } from "react-router-dom";
 const useStyles = makeStyles((theme) => ({
   header: {
     paddingBottom: 5,
+    paddingTop: 5,
     borderBottom: `1px solid ${theme.palette.divider}`,
     alignItems: "center",
     position: "sticky ",

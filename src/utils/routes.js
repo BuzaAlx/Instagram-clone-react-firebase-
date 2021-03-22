@@ -1,5 +1,6 @@
 import React from "react";
 import { Route, Redirect } from "react-router-dom";
+import PropTypes from "prop-types";
 
 export function IsUserRedirect({ user, loggedInPath, children, ...rest }) {
   return (
@@ -50,3 +51,18 @@ export function ProtectedRoute({ user, children, ...rest }) {
     />
   );
 }
+
+IsUserRedirect.propTypes = {
+  user: PropTypes.object.isRequired,
+  loggedInPath: PropTypes.string.isRequired,
+  path: PropTypes.string.isRequired,
+  exact: PropTypes.bool,
+  children: PropTypes.element.isRequired,
+};
+
+ProtectedRoute.propTypes = {
+  user: PropTypes.object.isRequired,
+  path: PropTypes.string.isRequired,
+  exact: PropTypes.bool,
+  children: PropTypes.element.isRequired,
+};

@@ -9,16 +9,16 @@ import {
   IconButton,
 } from "@material-ui/core";
 import { useParams, useHistory, Link } from "react-router-dom";
+import PropTypes from "prop-types";
 
 import PostsList from "../components/PostsList";
 import * as ROUTES from "../constants/routes";
 import { auth } from "../Firebase";
 import HomeOutlinedIcon from "@material-ui/icons/HomeOutlined";
-
 import UserAvatar from "../components/UserAvatar";
 import AddPost from "../components/AddPost";
 
-function userPage({ user }) {
+function UserPage({ user }) {
   const [postsCount, setPostsCount] = useState(0);
   const history = useHistory();
   const classes = useStyles();
@@ -86,4 +86,8 @@ function userPage({ user }) {
   );
 }
 
-export default userPage;
+UserPage.propTypes = {
+  user: PropTypes.object.isRequired,
+};
+
+export default UserPage;

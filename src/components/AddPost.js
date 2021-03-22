@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import ImageUpload from "./ImageUpload";
 import { Button, Popover } from "@material-ui/core";
+import PropTypes from "prop-types";
 
 function AddPost({ user }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -46,5 +47,9 @@ function AddPost({ user }) {
     </>
   );
 }
+
+AddPost.propTypes = {
+  user: PropTypes.object.isRequired,
+};
 
 export default AddPost;

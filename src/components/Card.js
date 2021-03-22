@@ -14,6 +14,7 @@ import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import BookmarkBorderSharpIcon from "@material-ui/icons/BookmarkBorderSharp";
 import { db } from "../Firebase";
 import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
 
 import { makeStyles } from "@material-ui/core/styles";
 import Comments from "./Card/Comments";
@@ -121,5 +122,11 @@ function CustomCard({ post, id, user }) {
     </div>
   );
 }
+
+CustomCard.propTypes = {
+  post: PropTypes.object.isRequired,
+  id: PropTypes.string.isRequired,
+  user: PropTypes.object.isRequired,
+};
 
 export default CustomCard;

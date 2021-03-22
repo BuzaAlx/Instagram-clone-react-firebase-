@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { IconButton, Typography } from "@material-ui/core";
 import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
 import FavoriteIcon from "@material-ui/icons/Favorite";
+import PropTypes from "prop-types";
+
 import { db } from "../../Firebase";
 
 function LikeButton({ postId, user }) {
@@ -63,5 +65,10 @@ function LikeButton({ postId, user }) {
     </>
   );
 }
+
+LikeButton.propTypes = {
+  postId: PropTypes.string.isRequired,
+  user: PropTypes.object.isRequired,
+};
 
 export default LikeButton;

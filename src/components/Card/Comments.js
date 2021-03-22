@@ -12,6 +12,7 @@ import {
 import { makeStyles } from "@material-ui/core/styles";
 import DeleteForeverOutlinedIcon from "@material-ui/icons/DeleteForeverOutlined";
 import firebase from "firebase";
+import PropTypes from "prop-types";
 
 import AddEmoji from "./AddEmoji";
 
@@ -159,5 +160,10 @@ function Comments({ postId, user }) {
     </>
   );
 }
+
+Comments.propTypes = {
+  postId: PropTypes.string.isRequired,
+  user: PropTypes.object.isRequired,
+};
 
 export default Comments;

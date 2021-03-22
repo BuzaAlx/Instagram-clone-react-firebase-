@@ -9,6 +9,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import { storage, db, auth } from "../Firebase";
+import PropTypes from "prop-types";
 
 const useStyles = makeStyles((theme) => ({
   large: {
@@ -151,5 +152,10 @@ function UserAvatar({ userId, user }) {
     </div>
   );
 }
+
+UserAvatar.propTypes = {
+  userId: PropTypes.string,
+  user: PropTypes.object,
+};
 
 export default UserAvatar;

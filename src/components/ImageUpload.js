@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import firebase from "firebase";
 import { storage, db } from "../Firebase";
 import { Input, Button, Grid, Box, Typography } from "@material-ui/core";
+import PropTypes from "prop-types";
 
 const ImageUpload = ({ username, userImg }) => {
   const [image, setImage] = useState(null);
@@ -91,6 +92,11 @@ const ImageUpload = ({ username, userImg }) => {
       <br />
     </Grid>
   );
+};
+
+ImageUpload.propTypes = {
+  username: PropTypes.string.isRequired,
+  userImg: PropTypes.string.isRequired,
 };
 
 export default ImageUpload;

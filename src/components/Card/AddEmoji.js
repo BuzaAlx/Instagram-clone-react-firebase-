@@ -3,6 +3,7 @@ import { IconButton, Popover } from "@material-ui/core";
 import SentimentSatisfiedRoundedIcon from "@material-ui/icons/SentimentSatisfiedRounded";
 import { makeStyles } from "@material-ui/core/styles";
 import emojis from "../../utils/emojis";
+import PropTypes from "prop-types";
 
 const useStyles = makeStyles((theme) => ({
   smileButton: {
@@ -20,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function AddEmoji({ setComment, comment }) {
+function AddEmoji({ setComment }) {
   const styles = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const handleClick = (event) => {
@@ -74,5 +75,9 @@ function AddEmoji({ setComment, comment }) {
     </>
   );
 }
+
+AddEmoji.propTypes = {
+  setComment: PropTypes.func.isRequired,
+};
 
 export default AddEmoji;

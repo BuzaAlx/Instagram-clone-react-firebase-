@@ -1,8 +1,11 @@
 import React from "react";
 import { Route, Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
+import { useSelector } from "react-redux";
 
-export function IsUserRedirect({ user, loggedInPath, children, ...rest }) {
+export function IsUserRedirect({ loggedInPath, children, ...rest }) {
+  const { currentUser: user } = useSelector((state) => state.user);
+
   return (
     <Route
       {...rest}
@@ -27,7 +30,9 @@ export function IsUserRedirect({ user, loggedInPath, children, ...rest }) {
   );
 }
 
-export function ProtectedRoute({ user, children, ...rest }) {
+export function ProtectedRoute({ children, ...rest }) {
+  const { currentUser: user } = useSelector((state) => state.user);
+
   return (
     <Route
       {...rest}
@@ -52,17 +57,17 @@ export function ProtectedRoute({ user, children, ...rest }) {
   );
 }
 
-IsUserRedirect.propTypes = {
-  user: PropTypes.object.isRequired,
-  loggedInPath: PropTypes.string.isRequired,
-  path: PropTypes.string.isRequired,
-  exact: PropTypes.bool,
-  children: PropTypes.element.isRequired,
-};
+// IsUserRedirect.propTypes = {
+//   user: PropTypes.object.isRequired,
+//   loggedInPath: PropTypes.string.isRequired,
+//   path: PropTypes.string.isRequired,
+//   exact: PropTypes.bool,
+//   children: PropTypes.element.isRequired,
+// };
 
-ProtectedRoute.propTypes = {
-  user: PropTypes.object.isRequired,
-  path: PropTypes.string.isRequired,
-  exact: PropTypes.bool,
-  children: PropTypes.element.isRequired,
-};
+// ProtectedRoute.propTypes = {
+//   user: PropTypes.object.isRequired,
+//   path: PropTypes.string.isRequired,
+//   exact: PropTypes.bool,
+//   children: PropTypes.element.isRequired,
+// };

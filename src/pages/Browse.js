@@ -14,6 +14,8 @@ import { useHistory } from "react-router-dom";
 import * as ROUTES from "../constants/routes";
 import { Link } from "react-router-dom";
 
+import { useDispatch, useSelector } from "react-redux";
+
 const useStyles = makeStyles((theme) => ({
   header: {
     paddingBottom: 5,
@@ -39,10 +41,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Browse({ user }) {
+function Browse() {
   const [posts, setPosts] = useState([]);
   const classes = useStyles();
   const history = useHistory();
+  const dispatch = useDispatch();
+  const { currentUser: user } = useSelector((state) => state.user);
 
   const handleLogout = () => {
     auth

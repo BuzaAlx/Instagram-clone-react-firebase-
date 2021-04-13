@@ -17,12 +17,15 @@ import { auth } from "../Firebase";
 import HomeOutlinedIcon from "@material-ui/icons/HomeOutlined";
 import UserAvatar from "../components/UserAvatar";
 import AddPost from "../components/AddPost";
+import { useSelector, useDispatch } from "react-redux";
 
-function UserPage({ user }) {
+function UserPage() {
   const [postsCount, setPostsCount] = useState(0);
   const history = useHistory();
   const classes = useStyles();
+  const dispatch = useDispatch();
   const { userId } = useParams();
+  const { currentUser: user } = useSelector((state) => state.user);
   const CurrentUserPage = user.displayName === userId ? true : false;
 
   const handleLogout = () => {

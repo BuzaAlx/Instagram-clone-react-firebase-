@@ -14,6 +14,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import * as ROUTES from "../constants/routes";
 import { auth } from "../Firebase";
 import { useHistory } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { SignUpUserStart } from "../redux/User/user.reducer";
 
 const newUserImg =
   "https://www.nj.com/resizer/h8MrN0-Nw5dB5FOmMVGMmfVKFJo=/450x0/smart/cloudfront-us-east-1.images.arcpublishing.com/advancelocal/SJGKVE5UNVESVCW7BBOHKQCZVE.jpg";
@@ -45,30 +47,37 @@ function SignUp() {
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const dispatch = useDispatch();
 
   const handleSignup = (e) => {
     e.preventDefault();
-    let isInvalid = password === "" || emailAddress === "";
-    if (isInvalid) return null;
 
-    return auth
-      .createUserWithEmailAndPassword(emailAddress, password)
-      .then((result) =>
-        result.user
-          .updateProfile({
-            displayName: firstName,
-            photoURL: newUserImg,
-          })
-          .then(() => {
-            history.push(ROUTES.BROWSE);
-          })
-      )
-      .catch((error) => {
-        setFirstName("");
-        setEmailAddress("");
-        setPassword("");
-        setError(error.message);
-      });
+    dispatch(
+      SignUpUserStart({ displayName: firstName, email: emailAddress, password })
+    );
+
+    // let isInvalid = password === "" || emailAddress === "";
+    // if (isInvalid) return null;
+
+    // return auth
+    //   .createUserWithEmailAndPassword(emailAddress, password)
+    //   .then(({ user }) =>
+    //     // console.log(user) getSnapshotFromUserAuth will be here !!!!!!!!!!!!!!
+    //     user
+    //       .updateProfile({
+    //         displayName: firstName,
+    //         photoURL: newUserImg,
+    //       })
+    //       .then(() => {
+    //         history.push(ROUTES.BROWSE);
+    //       })
+    //   )
+    //   .catch((error) => {
+    //     setFirstName("");
+    //     setEmailAddress("");
+    //     setPassword("");
+    //     setError(error.message);
+    //   });
   };
 
   return (

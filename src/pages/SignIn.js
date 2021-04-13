@@ -14,6 +14,9 @@ import { useHistory } from "react-router-dom";
 import { auth } from "../Firebase";
 import * as ROUTES from "../constants/routes";
 
+import { useDispatch, useSelector } from "react-redux";
+import { SignInStart } from "../redux/User/user.reducer";
+
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),
@@ -38,6 +41,7 @@ function SignIn() {
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const dispatch = useDispatch();
 
   const classes = useStyles();
   const history = useHistory();
@@ -47,16 +51,18 @@ function SignIn() {
     let isInvalid = password === "" || emailAddress === "";
     if (isInvalid) return null;
 
-    return auth
-      .signInWithEmailAndPassword(emailAddress, password)
-      .then(() => {
-        history.push(ROUTES.BROWSE);
-      })
-      .catch((error) => {
-        setEmailAddress("");
-        setPassword("");
-        setError(error.message);
-      });
+    dispatch(SignInStart({ emailAddress, password }));
+    // return auth
+    //   .signInWithEmailAndPassword(emailAddress, password)
+    //   .then(({ user }) => {
+    //     // console.log(user) getSnapshotFromUserAuth will be here !!!!!!!!!!!!!!
+    //     history.push(ROUTES.BROWSE);
+    //   })
+    //   .catch((error) => {
+    //     setEmailAddress("");
+    //     setPassword("");
+    //     setError(error.message);
+    //   });
   };
 
   return (

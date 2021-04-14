@@ -52,17 +52,6 @@ function SignIn() {
     if (isInvalid) return null;
 
     dispatch(SignInStart({ emailAddress, password }));
-    // return auth
-    //   .signInWithEmailAndPassword(emailAddress, password)
-    //   .then(({ user }) => {
-    //     // console.log(user) getSnapshotFromUserAuth will be here !!!!!!!!!!!!!!
-    //     history.push(ROUTES.BROWSE);
-    //   })
-    //   .catch((error) => {
-    //     setEmailAddress("");
-    //     setPassword("");
-    //     setError(error.message);
-    //   });
   };
 
   return (

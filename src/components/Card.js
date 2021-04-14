@@ -126,7 +126,6 @@ function CustomCard({ post, id, user }) {
 CustomCard.propTypes = {
   post: PropTypes.object.isRequired,
   id: PropTypes.string.isRequired,
-  user: PropTypes.object.isRequired,
 };
 
 export default CustomCard;

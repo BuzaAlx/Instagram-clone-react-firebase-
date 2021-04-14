@@ -1,6 +1,6 @@
 import { db, auth } from "../../Firebase";
 
-const handleUserProfile = async ({ userAuth, additionalData }) => {
+const handleUserProfile = async ({ userAuth, additionalData = {} }) => {
   if (!userAuth) return;
   const { uid } = userAuth;
 
@@ -37,4 +37,17 @@ export const getCurrentUser = () => {
       resolve(userAuth);
     }, reject);
   });
+};
+
+export const getInitialUser = async () => {
+  const userAuth = await getCurrentUser();
+  if (!userAuth) return null;
+
+  const userRef = await handleUserProfile({
+    userAuth: userAuth,
+  });
+  const snapshot = await userRef.get();
+
+  const user = { id: snapshot.id, ...snapshot.data() };
+  return user;
 };

@@ -68,7 +68,6 @@ function LikeButton({ postId, user }) {
 
 LikeButton.propTypes = {
   postId: PropTypes.string.isRequired,
-  user: PropTypes.object.isRequired,
 };
 
 export default LikeButton;

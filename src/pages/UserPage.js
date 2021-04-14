@@ -18,6 +18,7 @@ import HomeOutlinedIcon from "@material-ui/icons/HomeOutlined";
 import UserAvatar from "../components/UserAvatar";
 import AddPost from "../components/AddPost";
 import { useSelector, useDispatch } from "react-redux";
+import { signOutUserStart } from "../redux/User/user.reducer";
 
 function UserPage() {
   const [postsCount, setPostsCount] = useState(0);
@@ -29,14 +30,7 @@ function UserPage() {
   const CurrentUserPage = user.displayName === userId ? true : false;
 
   const handleLogout = () => {
-    auth
-      .signOut()
-      .then(() => {
-        history.push(ROUTES.SIGN_IN);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    dispatch(signOutUserStart(history));
   };
 
   return (
@@ -88,9 +82,5 @@ function UserPage() {
     </Container>
   );
 }
-
-UserPage.propTypes = {
-  user: PropTypes.object.isRequired,
-};
 
 export default UserPage;

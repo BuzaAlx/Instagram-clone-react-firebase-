@@ -163,7 +163,6 @@ function Comments({ postId, user }) {
 
 Comments.propTypes = {
   postId: PropTypes.string.isRequired,
-  user: PropTypes.object.isRequired,
 };
 
 export default Comments;

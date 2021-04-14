@@ -14,3 +14,7 @@ export const signInSuccess = (user) => ({
   type: userTypes.SIGN_IN_SUCCESS,
   payload: user,
 });
+
+export const signOutUserSuccess = () => ({
+  type: userTypes.SIGN_OUT_USER_SUCCESS,
+});

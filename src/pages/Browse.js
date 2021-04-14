@@ -15,6 +15,8 @@ import * as ROUTES from "../constants/routes";
 import { Link } from "react-router-dom";
 
 import { useDispatch, useSelector } from "react-redux";
+import { signOutUserStart } from "../redux/User/user.reducer";
+import { getPostsThunk } from "../redux/Posts/posts.reducer";
 
 const useStyles = makeStyles((theme) => ({
   header: {
@@ -42,31 +44,18 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Browse() {
-  const [posts, setPosts] = useState([]);
+  const { posts } = useSelector((state) => state.posts);
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
   const { currentUser: user } = useSelector((state) => state.user);
 
   const handleLogout = () => {
-    auth
-      .signOut()
-      .then(() => {
-        history.push(ROUTES.SIGN_IN);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    dispatch(signOutUserStart(history));
   };
 
   useEffect(() => {
-    const unsubscribe = db
-      .collection("posts")
-      .orderBy("timestamp", "desc")
-      .onSnapshot((snapshot) =>
-        setPosts(snapshot.docs.map((doc) => ({ id: doc.id, post: doc.data() })))
-      );
-    return () => unsubscribe();
+    dispatch(getPostsThunk());
   }, []);
 
   return (

@@ -10,15 +10,16 @@ import { useSelector, useDispatch } from "react-redux";
 import { CheckUserSessionStart } from "./redux/User/user.reducer";
 
 function App() {
-  // const { user } = useAuthListener();
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(CheckUserSessionStart());
   }, []);
 
-  const { currentUser } = useSelector((state) => state.user);
-  console.log("CURRRENT USER IS", { currentUser });
+  const NotFound = () => {
+    return <h1>page not found</h1>;
+  };
+
   return (
     <Router>
       <div>
@@ -46,6 +47,8 @@ function App() {
           <Route path={ROUTES.USER} exact>
             <UserPage />
           </Route>
+
+          <Route component={NotFound} />
         </Switch>
       </div>
     </Router>

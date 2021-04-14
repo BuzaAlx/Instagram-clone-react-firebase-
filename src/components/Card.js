@@ -64,18 +64,16 @@ function CustomCard({ post, id, user }) {
   };
 
   useEffect(() => {
-    db.collection("users")
-      .doc("images")
+    db.collection("myusers")
+      .where("displayName", "==", post.username)
       .get()
-      .then(function (doc) {
-        if (doc.exists) {
-          setAvatar(doc.data()[post.username]);
-        } else {
-          console.log("No such document!");
-        }
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          setAvatar(doc.data().photoURL);
+        });
       })
-      .catch(function (error) {
-        console.log("Error getting document:", error);
+      .catch((error) => {
+        console.log("Error getting documents: ", error);
       });
   }, [post.username]);
 
@@ -96,7 +94,7 @@ function CustomCard({ post, id, user }) {
             )
           }
           title={post.username}
-          subheader={moment(post.timestamp.toDate()).fromNow()}
+          subheader={moment(post?.timestamp?.toDate()).fromNow()}
         />
         <CardMedia
           className={styles.cardMedia}

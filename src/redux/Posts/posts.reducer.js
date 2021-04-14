@@ -1,6 +1,7 @@
 import { postsTypes } from "./posts.types";
-import { getPosts } from "./post.helpers";
-import { setPostsActionCreator } from "./posts.actions";
+import { addPost, getPosts } from "./post.helpers";
+import { setPostsActionCreator, addPostActionCreator } from "./posts.actions";
+import { db } from "../../Firebase";
 
 const INITIAL_STATE = {
   posts: [],

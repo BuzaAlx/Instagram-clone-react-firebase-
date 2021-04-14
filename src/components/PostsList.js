@@ -5,6 +5,9 @@ import { db } from "../Firebase";
 import Image from "../components/PostList/Image";
 import PropTypes from "prop-types";
 
+import { useDispatch, useSelector } from "react-redux";
+import { getUserPostsThunk } from "../redux/User/user.reducer";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
@@ -26,30 +29,23 @@ const useStyles = makeStyles((theme) => ({
 
 function PostsList({ userId, setPostsCount }) {
   const classes = useStyles();
-  const [userPosts, setUserPosts] = useState([]);
+
+  const dispatch = useDispatch();
+  const { selectedUserPosts } = useSelector((state) => state.user);
 
   useEffect(() => {
-    const unsubscribe = db
-      .collection("posts")
-      .where("username", "==", userId)
-      // .orderBy("timestamp", "desc")
-      .onSnapshot((snapshot) =>
-        setUserPosts(
-          snapshot.docs.map((doc) => ({ id: doc.id, post: doc.data() }))
-        )
-      );
-    return () => unsubscribe();
+    dispatch(getUserPostsThunk(userId));
   }, []);
 
   useEffect(() => {
-    setPostsCount(userPosts.length);
-  }, [userPosts]);
+    setPostsCount(selectedUserPosts.length);
+  }, [selectedUserPosts]);
 
   return (
     <div>
       <GridList cols={3} className={classes.gridList}>
-        {userPosts.map((post) => (
-          <Image key={post.id} post={post.post} postId={post.id} />
+        {selectedUserPosts.map((post) => (
+          <Image key={post.id} post={post} postId={post.id} />
         ))}
       </GridList>
     </div>

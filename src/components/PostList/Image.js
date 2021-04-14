@@ -88,7 +88,7 @@ function Image({ post, postId }) {
   const modalBody = (
     <div className={classes.paper}>
       <img
-        src={post.imageUrl}
+        src={post?.imageUrl}
         className={classes.ImgModal}
         alt="somePostTitle"
       />
@@ -103,7 +103,7 @@ function Image({ post, postId }) {
   return (
     <>
       <GridListTile className={classes.photo} onClick={handleOpen}>
-        <img src={post.imageUrl} alt="postImage" />
+        <img src={post?.imageUrl} alt="postImage" />
 
         <GridListTileBar
           className={classes.ListBar}

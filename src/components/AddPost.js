@@ -39,10 +39,7 @@ function AddPost({ user }) {
           horizontal: "center",
         }}
       >
-        <ImageUpload
-          username={user && user.displayName}
-          userImg={user && user.photoURL}
-        />
+        <ImageUpload close={handleClose} username={user && user.displayName} />
       </Popover>
     </>
   );

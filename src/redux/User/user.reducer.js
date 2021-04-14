@@ -1,8 +1,13 @@
 import { userTypes } from "./user.types";
-import handleUserProfile from "./user.helpers";
+import handleUserProfile, { getUserPosts } from "./user.helpers";
 import { auth } from "../../Firebase";
-import { getCurrentUser } from "./user.helpers";
-import { signInSuccess, signOutUserSuccess } from "./user.actions";
+import { getCurrentUser, addPost } from "./user.helpers";
+import {
+  addPostActionCreator,
+  setUserPosts,
+  signInSuccess,
+  signOutUserSuccess,
+} from "./user.actions";
 import { SIGN_IN } from "../../constants/routes";
 // import { getInitialUser } from "./user.helpers";
 
@@ -18,6 +23,7 @@ console.log(user);
 
 const INITIAL_STATE = {
   currentUser: user,
+  selectedUserPosts: [],
   userErr: [],
 };
 
@@ -40,6 +46,16 @@ const userReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         ...INITIAL_STATE,
+      };
+    case userTypes.SET_USER_POSTS:
+      return {
+        ...state,
+        selectedUserPosts: action.payload,
+      };
+    case userTypes.ADD_POST:
+      return {
+        ...state,
+        selectedUserPosts: [...state.selectedUserPosts, action.payload],
       };
     default:
       return state;
@@ -120,6 +136,25 @@ export const signOutUserStart = (history) => async (dispatch) => {
     });
     dispatch(signOutUserSuccess());
     history.push(SIGN_IN);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getUserPostsThunk = (userId) => async (dispatch) => {
+  try {
+    let posts = await getUserPosts(userId);
+
+    dispatch(setUserPosts(posts));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const addNewPostThunk = (data, userId) => async (dispatch) => {
+  try {
+    await addPost(data);
+    dispatch(getUserPostsThunk(userId));
   } catch (error) {
     console.log(error);
   }

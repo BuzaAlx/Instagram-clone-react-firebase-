@@ -43,7 +43,18 @@ function UserAvatar({ userId, user }) {
   };
 
   const handleUpload = () => {
-    const uploadTask = storage.ref(`users/${image.name}`).put(image);
+    let pictureRef = storage.refFromURL(user.photoURL);
+    pictureRef
+      .delete()
+      .then(() => {
+        console.log("picture is delete");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    // first delete previous photo from storage
+    const uploadTask = storage.ref(`MYusers/${image.name}`).put(image);
     uploadTask.on(
       "state_changed",
       (snapshot) => {},
@@ -52,50 +63,36 @@ function UserAvatar({ userId, user }) {
       },
       () => {
         storage
-          .ref("users")
+          .ref("MYusers")
           .child(image.name)
           .getDownloadURL()
           .then((url) => {
             setUrl(url);
-            auth.currentUser
-              .updateProfile({
+            db.collection("myusers").doc(user.id).set(
+              {
                 photoURL: url,
-              })
-              .then(function () {
-                console.log("user Avatar changed");
-              })
-              .catch(function (error) {
-                console.log(error);
-              });
-
-            db.collection("users")
-              .doc("images")
-              .set(
-                {
-                  [userId]: url,
-                },
-                { merge: true }
-              );
+              },
+              { merge: true }
+            );
 
             setImage(null);
+            handleClose();
           });
       }
     );
   };
 
   useEffect(() => {
-    db.collection("users")
-      .doc("images")
+    db.collection("myusers")
+      .where("displayName", "==", userId)
       .get()
-      .then(function (doc) {
-        if (doc.exists) {
-          setAvatar(doc.data()[userId]);
-        } else {
-          console.log("No such document!");
-        }
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          setAvatar(doc.data().photoURL);
+        });
       })
-      .catch(function (error) {
-        console.log("Error getting document:", error);
+      .catch((error) => {
+        console.log("Error getting documents: ", error);
       });
   }, [userId]);
 

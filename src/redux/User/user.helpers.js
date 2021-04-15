@@ -82,3 +82,5 @@ export const addPost = (data) => {
     }
   });
 };
+
+//TODO:при виходе из юзей пейдж очищать selectedUser posts

@@ -13,8 +13,10 @@ import { makeStyles } from "@material-ui/core/styles";
 import DeleteForeverOutlinedIcon from "@material-ui/icons/DeleteForeverOutlined";
 import firebase from "firebase";
 import PropTypes from "prop-types";
+import { useDispatch, useSelector } from "react-redux";
 
 import AddEmoji from "./AddEmoji";
+import { getPostCommentsThunk } from "../../redux/Posts/posts.reducer";
 
 const useStyles = makeStyles((theme) => ({
   commentBox: {
@@ -55,8 +57,11 @@ function Comments({ postId, user }) {
   const [comments, setComments] = useState([]);
   const [comment, setComment] = useState("");
   const styles = useStyles();
+  const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(getPostCommentsThunk(postId));
+
     let unsubscribe;
     if (postId) {
       unsubscribe = db
@@ -70,7 +75,6 @@ function Comments({ postId, user }) {
           );
         });
     }
-
     return () => {
       unsubscribe();
     };

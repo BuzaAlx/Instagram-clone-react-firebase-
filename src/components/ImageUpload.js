@@ -18,6 +18,7 @@ const ImageUpload = ({ username, close }) => {
     }
   };
 
+  //TODO: Make a custom hook
   const handleUpload = () => {
     const uploadTask = storage.ref(`images/${image.name}`).put(image);
     uploadTask.on(

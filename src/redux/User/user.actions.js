@@ -15,8 +15,9 @@ export const signInSuccess = (user) => ({
   payload: user,
 });
 
-export const signOutUserSuccess = () => ({
+export const signOutUserSuccess = (data) => ({
   type: userTypes.SIGN_OUT_USER_SUCCESS,
+  payload: data,
 });
 
 export const setUserPosts = (posts) => ({
@@ -27,4 +28,11 @@ export const setUserPosts = (posts) => ({
 export const addPostActionCreator = (post) => ({
   type: userTypes.ADD_POST,
   payload: post,
+});
+
+////////////////////
+
+export const setLoadingActionCreator = (flag) => ({
+  type: userTypes.SET_USER_LOADING,
+  payload: flag,
 });

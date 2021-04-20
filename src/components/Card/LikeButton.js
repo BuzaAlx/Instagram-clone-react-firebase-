@@ -3,49 +3,30 @@ import { IconButton, Typography } from "@material-ui/core";
 import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import PropTypes from "prop-types";
+import { useSelector, useDispatch } from "react-redux";
+import { deleteLikeThunk, addLikeThunk } from "../../redux/Posts/posts.reducer";
 
 import { db } from "../../Firebase";
 
-function LikeButton({ postId, user }) {
-  const [likes, setLikes] = useState([]);
-  const [isPostLiked, setIsPostLiked] = useState(false);
-
-  useEffect(() => {
-    let unsubscribe;
-    if (postId) {
-      unsubscribe = db
-        .collection("posts")
-        .doc(postId)
-        .collection("likes")
-        .onSnapshot((snapshot) => {
-          setLikes(
-            snapshot.docs.map((doc) => ({ id: doc.id, like: doc.data() }))
-          );
-        });
-    }
-
-    return () => {
-      unsubscribe();
-    };
-  }, [postId]);
+function LikeButton({ postId, user, likes }) {
+  const found = likes.find((like) => like.username === user.displayName);
+  console.log(found);
+  const [isPostLiked, setIsPostLiked] = useState(found);
+  const dispatch = useDispatch();
 
   const handleLike = (e) => {
     e.preventDefault();
-
-    const found = likes.find((like) => like.like.username === user.displayName);
+    let username = user.displayName;
 
     if (found) {
-      db.collection("posts")
-        .doc(postId)
-        .collection("likes")
-        .doc(found.id)
-        .delete();
+      dispatch(deleteLikeThunk(postId, found));
       setIsPostLiked(false);
     }
     if (!found) {
-      db.collection("posts").doc(postId).collection("likes").add({
-        username: user.displayName,
-      });
+      dispatch(addLikeThunk(postId, username));
+      // db.collection("posts").doc(postId).collection("likes").add({
+      //   username,
+      // });
       setIsPostLiked(true);
     }
   };

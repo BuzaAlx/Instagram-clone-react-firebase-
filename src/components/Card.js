@@ -20,6 +20,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import Comments from "./Card/Comments";
 import LikeButton from "./Card/LikeButton";
 import moment from "moment";
+import { getPostCommentsThunk } from "../redux/Posts/posts.reducer";
+import { useDispatch } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -43,12 +45,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function CustomCard({ post, id, user }) {
+function CustomCard({ post, user }) {
   const [avatar, setAvatar] = useState(null);
   const styles = useStyles();
+  const dispatch = useDispatch();
 
   const handleDelete = () => {
-    let postId = id;
+    let postId = post.id;
     if (post.username !== user.displayName) {
       return;
     }
@@ -103,7 +106,7 @@ function CustomCard({ post, id, user }) {
         />
         <CardActions disableSpacing className={styles.CardActions}>
           <Box display="flex" alignItems="center">
-            <LikeButton user={user} postId={id} />
+            <LikeButton likes={post.likes} user={user} postId={post.id} />
           </Box>
           <IconButton>
             <BookmarkBorderSharpIcon />
@@ -115,15 +118,11 @@ function CustomCard({ post, id, user }) {
             <strong>{post.username}</strong> {post.caption}
           </Typography>
         </CardContent>
-        <Comments postId={id} user={user} />
+
+        <Comments postId={post.id} user={user} comments={post.comments} />
       </Card>
     </div>
   );
 }
-
-CustomCard.propTypes = {
-  post: PropTypes.object.isRequired,
-  id: PropTypes.string.isRequired,
-};
 
 export default CustomCard;

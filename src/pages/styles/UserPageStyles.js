@@ -5,9 +5,9 @@ export const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(2),
   },
   header: {
-    paddingBottom: 5,
     borderBottom: `1px solid ${theme.palette.divider}`,
     alignItems: "center",
+    height: "55px",
   },
   box: {
     justifyContent: "flex-end",

@@ -16,7 +16,11 @@ import PropTypes from "prop-types";
 import { useDispatch, useSelector } from "react-redux";
 
 import AddEmoji from "./AddEmoji";
-import { getPostCommentsThunk } from "../../redux/Posts/posts.reducer";
+import {
+  // getPostCommentsThunk,
+  postCommentThunk,
+  deletePostThunk,
+} from "../../redux/Posts/posts.reducer";
 
 const useStyles = makeStyles((theme) => ({
   commentBox: {
@@ -53,62 +57,33 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Comments({ postId, user }) {
-  const [comments, setComments] = useState([]);
+function Comments({ postId, user, comments }) {
   const [comment, setComment] = useState("");
   const styles = useStyles();
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(getPostCommentsThunk(postId));
-
-    let unsubscribe;
-    if (postId) {
-      unsubscribe = db
-        .collection("posts")
-        .doc(postId)
-        .collection("comments")
-        .orderBy("timestamp", "asc")
-        .onSnapshot((snapshot) => {
-          setComments(
-            snapshot.docs.map((doc) => ({ id: doc.id, comment: doc.data() }))
-          );
-        });
-    }
-    return () => {
-      unsubscribe();
-    };
-  }, [postId]);
-
   const postComment = (e) => {
     e.preventDefault();
 
-    db.collection("posts").doc(postId).collection("comments").add({
-      text: comment,
-      username: user.displayName,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-    });
+    dispatch(
+      postCommentThunk({
+        postId,
+        text: comment,
+        username: user.displayName,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      })
+    );
     setComment("");
   };
 
   const handleDelete = (id) => {
-    db.collection("posts")
-      .doc(postId)
-      .collection("comments")
-      .doc(id)
-      .delete()
-      .then(function () {
-        console.log("Document successfully deleted!");
-      })
-      .catch(function (e) {
-        console.error("Error removing document: ", e);
-      });
+    dispatch(deletePostThunk(postId, id));
   };
 
   return (
     <>
       <CardContent style={{ paddingTop: 0 }}>
-        {comments.map(({ comment, id }) => (
+        {comments?.map(({ comment, id }) => (
           <Box
             display="flex"
             justifyContent="space-between"
@@ -164,9 +139,5 @@ function Comments({ postId, user }) {
     </>
   );
 }
-
-Comments.propTypes = {
-  postId: PropTypes.string.isRequired,
-};
 
 export default Comments;

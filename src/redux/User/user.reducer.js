@@ -4,6 +4,7 @@ import { auth } from "../../Firebase";
 import { getCurrentUser, addPost } from "./user.helpers";
 import {
   addPostActionCreator,
+  setLoadingActionCreator,
   setUserPosts,
   signInSuccess,
   signOutUserSuccess,
@@ -25,6 +26,7 @@ const INITIAL_STATE = {
   currentUser: user,
   selectedUserPosts: [],
   userErr: [],
+  isLoadingUserReducer: false,
 };
 
 const userReducer = (state = INITIAL_STATE, action) => {
@@ -42,10 +44,9 @@ const userReducer = (state = INITIAL_STATE, action) => {
         userErr: action.payload,
       };
     case userTypes.SIGN_OUT_USER_SUCCESS:
-      localStorage.removeItem("authUser");
       return {
         ...state,
-        ...INITIAL_STATE,
+        currentUser: null,
       };
     case userTypes.SET_USER_POSTS:
       return {
@@ -56,6 +57,11 @@ const userReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         selectedUserPosts: [...state.selectedUserPosts, action.payload],
+      };
+    case userTypes.SET_USER_LOADING:
+      return {
+        ...state,
+        isLoadingUserReducer: action.payload,
       };
     default:
       return state;
@@ -72,6 +78,7 @@ export const getSnapshotFromUserAuth = (user, additionalData = {}) => async (
       userAuth: user,
       additionalData,
     });
+
     const snapshot = await userRef.get();
 
     dispatch(
@@ -80,6 +87,8 @@ export const getSnapshotFromUserAuth = (user, additionalData = {}) => async (
         ...snapshot.data(),
       })
     );
+
+    dispatch(setLoadingActionCreator(false));
   } catch (err) {
     console.log(err);
   }
@@ -87,7 +96,7 @@ export const getSnapshotFromUserAuth = (user, additionalData = {}) => async (
 
 export const SignInStart = (userCredentials) => async (dispatch) => {
   const { emailAddress, password } = userCredentials;
-
+  dispatch(setLoadingActionCreator(true));
   auth
     .signInWithEmailAndPassword(emailAddress, password)
     .then(({ user }) => {
@@ -96,17 +105,12 @@ export const SignInStart = (userCredentials) => async (dispatch) => {
     .catch((error) => {
       console.log(error);
     });
+  dispatch(setLoadingActionCreator(false));
 };
 
 export const SignUpUserStart = ({ displayName, email, password }) => async (
   dispatch
 ) => {
-  // if (password !== confirmPassword) {
-  //   const err = ["Password Don't match"];
-  //   yield put(userError(err));
-  //   return;
-  // }
-
   try {
     const { user } = await auth.createUserWithEmailAndPassword(email, password);
     const additionalData = { displayName, photoURL: newUserImg };
@@ -118,6 +122,7 @@ export const SignUpUserStart = ({ displayName, email, password }) => async (
 
 export const CheckUserSessionStart = () => async (dispatch) => {
   try {
+    dispatch(setLoadingActionCreator(true));
     const userAuth = await getCurrentUser();
     if (!userAuth) {
       localStorage.removeItem("authUser");
@@ -131,11 +136,14 @@ export const CheckUserSessionStart = () => async (dispatch) => {
 
 export const signOutUserStart = (history) => async (dispatch) => {
   try {
-    auth.signOut().catch((error) => {
-      throw new Error(error);
-    });
-    dispatch(signOutUserSuccess());
-    history.push(SIGN_IN);
+    auth
+      .signOut()
+      .then(() => localStorage.removeItem("authUser"))
+      .then(history.push(SIGN_IN))
+      .catch((error) => {
+        throw new Error(error);
+      });
+    dispatch(signOutUserSuccess(history));
   } catch (error) {
     console.log(error);
   }

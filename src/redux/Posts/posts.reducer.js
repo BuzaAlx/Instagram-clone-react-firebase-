@@ -1,16 +1,29 @@
 import { postsTypes } from "./posts.types";
-import { getPosts, getComments } from "./post.helpers";
+import {
+  getPosts,
+  getComments,
+  postComment,
+  getLikes,
+  addLike,
+} from "./post.helpers";
 import {
   setPostsActionCreator,
   addCommentsActionCreator,
+  setCommentActionCreator,
+  setLoadingActionCreator,
+  deleteCommentActionCreator,
+  deleteLikeActionCreator,
+  addLikeActionCreator,
 } from "./posts.actions";
 import { db } from "../../Firebase";
 
 const INITIAL_STATE = {
   posts: [],
+  isLoading: false,
 };
 
 const postsReducer = (state = INITIAL_STATE, action) => {
+  let postId, postsCopy, postIndex, postCopy, commentsCopy;
   switch (action.type) {
     case postsTypes.SET_POSTS:
       return {
@@ -18,23 +31,99 @@ const postsReducer = (state = INITIAL_STATE, action) => {
         posts: action.payload,
       };
     case postsTypes.ADD_COMMENTS:
-      let postId = action.payload.postId;
-      let postsCopy = [...state.posts];
+      postId = action.payload.postId;
+      postsCopy = [...state.posts];
+      postIndex = postsCopy.findIndex((p) => p.id === postId);
 
-      let postIndex = postsCopy.findIndex((p) => p.id === postId);
-
-      let postCopy = {
+      postCopy = {
         ...postsCopy[postIndex],
         comments: action.payload.comments,
       };
 
-      // debugger;
+      postsCopy[postIndex] = postCopy;
+
+      return {
+        ...state,
+        posts: postsCopy,
+      };
+    case postsTypes.SET_COMMENT:
+      let { obj } = action.payload;
+
+      postsCopy = [...state.posts];
+      postIndex = postsCopy.findIndex((p) => p.id === action.payload.postId);
+      commentsCopy = postsCopy[postIndex].comments;
+
+      postCopy = {
+        ...postsCopy[postIndex],
+        comments: [...commentsCopy, obj],
+      };
+
+      postsCopy[postIndex] = postCopy;
 
       return {
         ...state,
         posts: postsCopy,
       };
 
+    case postsTypes.DELETE_COMMENT:
+      let { postId, id } = action.payload;
+
+      postsCopy = [...state.posts];
+      postIndex = postsCopy.findIndex((p) => p.id === action.payload.postId);
+      commentsCopy = postsCopy[postIndex].comments;
+
+      let comment = commentsCopy.find((c) => c.id === id);
+      let newComments = commentsCopy.filter((c) => c.id !== comment.id);
+
+      postsCopy[postIndex] = { ...postsCopy[postIndex], comments: newComments };
+
+      return {
+        ...state,
+        posts: postsCopy,
+      };
+
+    case postsTypes.DELECTE_LIKE: {
+      let { postId, likeId } = action.payload;
+
+      postsCopy = [...state.posts];
+      postIndex = postsCopy.findIndex((p) => p.id === postId);
+      let likesCopy = postsCopy[postIndex].likes;
+
+      let like = likesCopy.find((l) => l.id === likeId);
+      let newLikes = likesCopy.filter((l) => l.id !== like.id);
+
+      postsCopy[postIndex] = { ...postsCopy[postIndex], likes: newLikes };
+      return {
+        ...state,
+        posts: postsCopy,
+      };
+    }
+    case postsTypes.ADD_LIKE: {
+      let { postId, obj } = action.payload;
+
+      postsCopy = [...state.posts];
+      postIndex = postsCopy.findIndex((p) => p.id === postId);
+      let likesCopy = postsCopy[postIndex].likes;
+
+      postsCopy[postIndex] = {
+        ...postsCopy[postIndex],
+        likes: [...likesCopy, obj],
+      };
+
+      return {
+        ...state,
+        posts: postsCopy,
+      };
+    }
+    case postsTypes.RESET_DATA:
+      return {
+        state: INITIAL_STATE,
+      };
+    case postsTypes.SET_LOADING:
+      return {
+        ...state,
+        isLoading: action.payload,
+      };
     default:
       return state;
   }
@@ -44,17 +133,83 @@ export default postsReducer;
 
 export const getPostsThunk = () => async (dispatch) => {
   try {
-    const post = await getPosts();
-    dispatch(setPostsActionCreator(post));
+    const posts = await getPosts();
+    let postsWithComments = posts.map(async (post) => {
+      let comments = await getComments(post.id);
+      let likes = await getLikes(post.id);
+      return { ...post, comments, likes };
+    });
+
+    Promise.all(postsWithComments).then((posts) => {
+      dispatch(setPostsActionCreator(posts));
+    });
   } catch (error) {
     console.log(error);
   }
 };
 
-export const getPostCommentsThunk = (postId) => async (dispatch) => {
+export const postCommentThunk = (data) => async (dispatch) => {
   try {
-    let comments = await getComments(postId);
-    dispatch(addCommentsActionCreator({ comments, postId }));
+    let id = await postComment(data); //bad TODO: formate this shit, problem: cant receive data from the FB after adding
+    let obj = {
+      id,
+      comment: {
+        text: data.text,
+        username: data.username,
+        timestamp: {
+          nanoseconds: 0,
+          seconds: 0,
+        },
+      },
+    };
+    dispatch(setCommentActionCreator({ obj, postId: data.postId }));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const deletePostThunk = (postId, id) => async (dispatch) => {
+  try {
+    db.collection("posts")
+      .doc(postId)
+      .collection("comments")
+      .doc(id)
+      .delete()
+      .then(function () {
+        console.log("Document successfully deleted!");
+      })
+      .catch(function (e) {
+        console.error("Error removing document: ", e);
+      });
+    dispatch(deleteCommentActionCreator({ postId, id }));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const deleteLikeThunk = (postId, found) => async (dispatch) => {
+  try {
+    db.collection("posts")
+      .doc(postId)
+      .collection("likes")
+      .doc(found.id)
+      .delete();
+
+    dispatch(deleteLikeActionCreator({ postId, likeId: found.id }));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const addLikeThunk = (postId, username) => async (dispatch) => {
+  try {
+    let id = await addLike({ postId, username });
+    let obj = {
+      username,
+      id,
+    };
+
+    dispatch(addLikeActionCreator({ postId, obj }));
   } catch (error) {
     console.log(error);
   }

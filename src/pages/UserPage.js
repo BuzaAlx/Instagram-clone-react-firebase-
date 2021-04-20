@@ -1,24 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useStyles } from "./styles/UserPageStyles";
-import {
-  Container,
-  Grid,
-  Typography,
-  Button,
-  Box,
-  IconButton,
-} from "@material-ui/core";
+import { Container, Grid, Typography, Button, Box } from "@material-ui/core";
 import { useParams, useHistory, Link } from "react-router-dom";
-import PropTypes from "prop-types";
 
 import PostsList from "../components/PostsList";
 import * as ROUTES from "../constants/routes";
 import { auth } from "../Firebase";
-import HomeOutlinedIcon from "@material-ui/icons/HomeOutlined";
 import UserAvatar from "../components/UserAvatar";
 import AddPost from "../components/AddPost";
 import { useSelector, useDispatch } from "react-redux";
 import { signOutUserStart } from "../redux/User/user.reducer";
+
+import Logo from "../resources/images/Logo.png";
 
 function UserPage() {
   const [postsCount, setPostsCount] = useState(0);
@@ -36,16 +29,21 @@ function UserPage() {
   return (
     <Container>
       <Grid component="header" container className={classes.header}>
-        <Grid item xs={6}>
-          <Typography variant="h5">Instagram</Typography>
+        <Grid item xs={6} container>
+          <Link to={ROUTES.BROWSE}>
+            <img
+              src={Logo}
+              alt="logo"
+              style={{ width: "103px", display: "block" }}
+            />
+          </Link>
         </Grid>
         <Grid item xs={6} container justify="flex-end" alignItems="center">
-          <IconButton>
-            <Link to={ROUTES.BROWSE}>
-              <HomeOutlinedIcon fontSize="large" color="primary" />
-            </Link>
-          </IconButton>
-          <Button variant="outlined" onClick={handleLogout}>
+          <Button
+            variant="outlined"
+            onClick={handleLogout}
+            style={{ width: "80px" }}
+          >
             Logout
           </Button>
         </Grid>

@@ -1,7 +1,7 @@
 import { userTypes } from "./user.types";
 import handleUserProfile, { getUserPosts } from "./user.helpers";
 import { auth } from "../../Firebase";
-import { getCurrentUser, addPost } from "./user.helpers";
+import { getCurrentUser, addPost, getAvatar } from "./user.helpers";
 import {
   addPostActionCreator,
   setLoadingActionCreator,
@@ -10,17 +10,13 @@ import {
   signOutUserSuccess,
 } from "./user.actions";
 import { SIGN_IN } from "../../constants/routes";
-// import { getInitialUser } from "./user.helpers";
-
-const newUserImg =
-  "https://www.nj.com/resizer/h8MrN0-Nw5dB5FOmMVGMmfVKFJo=/450x0/smart/cloudfront-us-east-1.images.arcpublishing.com/advancelocal/SJGKVE5UNVESVCW7BBOHKQCZVE.jpg";
+import newUser from "../../img/newUser.webp";
 
 export const getInitialUser = () => {
   return localStorage.getItem("authUser");
 };
 
 let user = getInitialUser();
-console.log(user);
 
 const INITIAL_STATE = {
   currentUser: user,
@@ -113,7 +109,7 @@ export const SignUpUserStart = ({ displayName, email, password }) => async (
 ) => {
   try {
     const { user } = await auth.createUserWithEmailAndPassword(email, password);
-    const additionalData = { displayName, photoURL: newUserImg };
+    const additionalData = { displayName, photoURL: newUser };
     dispatch(getSnapshotFromUserAuth(user, additionalData));
   } catch (err) {
     console.log(err);
@@ -163,6 +159,15 @@ export const addNewPostThunk = (data, userId) => async (dispatch) => {
   try {
     await addPost(data);
     dispatch(getUserPostsThunk(userId));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getUserAvatarThunk = (userId) => async (dispatch) => {
+  try {
+    let avatarURL = await getAvatar(userId);
+    // TODO: закончить
   } catch (error) {
     console.log(error);
   }

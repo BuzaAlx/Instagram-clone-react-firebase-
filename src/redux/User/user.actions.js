@@ -30,8 +30,6 @@ export const addPostActionCreator = (post) => ({
   payload: post,
 });
 
-////////////////////
-
 export const setLoadingActionCreator = (flag) => ({
   type: userTypes.SET_USER_LOADING,
   payload: flag,

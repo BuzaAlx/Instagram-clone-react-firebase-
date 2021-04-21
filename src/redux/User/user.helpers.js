@@ -84,3 +84,19 @@ export const addPost = (data) => {
 };
 
 //TODO:при виходе из юзей пейдж очищать selectedUser posts
+
+export const getAvatar = (userId) => {
+  return new Promise((resolve, reject) => {
+    db.collection("myusers")
+      .where("displayName", "==", userId)
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          resolve(doc.data().photoURL);
+        });
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+};

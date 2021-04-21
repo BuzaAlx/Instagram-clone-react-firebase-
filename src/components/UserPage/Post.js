@@ -62,7 +62,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Image({ post, postId }) {
+function Post({ post, postId }) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [likes, setLikes] = useState(null);
@@ -135,9 +135,9 @@ function Image({ post, postId }) {
   );
 }
 
-Image.propTypes = {
+Post.propTypes = {
   post: PropTypes.object.isRequired,
   postId: PropTypes.string.isRequired,
 };
 
-export default Image;
+export default Post;

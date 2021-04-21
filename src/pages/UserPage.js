@@ -3,11 +3,11 @@ import { useStyles } from "./styles/UserPageStyles";
 import { Container, Grid, Typography, Button, Box } from "@material-ui/core";
 import { useParams, useHistory, Link } from "react-router-dom";
 
-import PostsList from "../components/PostsList";
+import PostsList from "../components/UserPage/PostsList";
 import * as ROUTES from "../constants/routes";
 import { auth } from "../Firebase";
-import UserAvatar from "../components/UserAvatar";
-import AddPost from "../components/AddPost";
+import UserAvatar from "../components/UserPage/UserAvatar";
+import AddPost from "../components/UserPage/AddPost";
 import { useSelector, useDispatch } from "react-redux";
 import { signOutUserStart } from "../redux/User/user.reducer";
 
@@ -67,7 +67,7 @@ function UserPage() {
                 </Button>
               </>
             )}
-            {CurrentUserPage && <AddPost user={user} />}
+            {CurrentUserPage && <AddPost user={user} userId={userId} />}
           </Box>
           <Box display="flex" className={classes.activity}>
             <Typography variant="h6">{postsCount} posts</Typography>

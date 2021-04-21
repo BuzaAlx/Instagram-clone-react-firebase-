@@ -7,18 +7,15 @@ import {
   Button,
   Box,
 } from "@material-ui/core";
-import { auth, db } from "../Firebase";
 import { makeStyles } from "@material-ui/core/styles";
-import CustomCard from "../components/Card";
+import Card from "../components/BrowsePage/Card";
 import { useHistory } from "react-router-dom";
-import * as ROUTES from "../constants/routes";
 import { Link } from "react-router-dom";
 
 import { useDispatch, useSelector } from "react-redux";
 import { signOutUserStart } from "../redux/User/user.reducer";
 import { getPostsThunk } from "../redux/Posts/posts.reducer";
 
-import useFullPageLoader from "../hooks/useFullPageLoader";
 import FullPageLoader from "../components/Loader";
 import Logo from "../resources/images/Logo.png";
 
@@ -48,7 +45,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Browse() {
+function BrowsePage() {
   const { isLoadingUserReducer } = useSelector((state) => state.user);
   const classes = useStyles();
   const history = useHistory();
@@ -64,6 +61,7 @@ function Browse() {
   useEffect(() => {
     dispatch(getPostsThunk());
   }, []);
+
   const { posts } = useSelector((state) => state.posts);
 
   if (isLoadingUserReducer) {
@@ -101,7 +99,7 @@ function Browse() {
         </Grid>
         <Box>
           {posts?.map((post) => (
-            <CustomCard key={post.id} post={post} user={user} />
+            <Card key={post.id} post={post} user={user} />
           ))}
         </Box>
       </Container>
@@ -109,4 +107,4 @@ function Browse() {
   );
 }
 
-export default Browse;
+export default BrowsePage;

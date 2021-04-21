@@ -1,6 +1,6 @@
 import "./App.css";
 import React, { useEffect } from "react";
-import { Browse, SignIn, SignUp, UserPage } from "./pages";
+import { BrowsePage, SignIn, SignUp, UserPage } from "./pages";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import * as ROUTES from "./constants/routes";
 import useAuthListener from "./hooks/use-auth-listener";
@@ -41,7 +41,7 @@ function App() {
           </IsUserRedirect>
 
           <ProtectedRoute path={ROUTES.BROWSE} exact>
-            <Browse />
+            <BrowsePage />
           </ProtectedRoute>
 
           <Route path={ROUTES.USER} exact>

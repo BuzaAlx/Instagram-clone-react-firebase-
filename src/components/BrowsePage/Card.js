@@ -12,16 +12,18 @@ import {
 } from "@material-ui/core";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import BookmarkBorderSharpIcon from "@material-ui/icons/BookmarkBorderSharp";
-import { db } from "../Firebase";
+import { db, storage } from "../../Firebase";
 import { Link } from "react-router-dom";
-import PropTypes from "prop-types";
 
 import { makeStyles } from "@material-ui/core/styles";
 import Comments from "./Card/Comments";
 import LikeButton from "./Card/LikeButton";
 import moment from "moment";
-import { getPostCommentsThunk } from "../redux/Posts/posts.reducer";
 import { useDispatch } from "react-redux";
+import {
+  getPostAvatarThunk,
+  deletePostThunk,
+} from "../../redux/Posts/posts.reducer";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -46,39 +48,16 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function CustomCard({ post, user }) {
-  const [avatar, setAvatar] = useState(null);
   const styles = useStyles();
   const dispatch = useDispatch();
 
   const handleDelete = () => {
-    let postId = post.id;
-    if (post.username !== user.displayName) {
-      return;
-    }
-    db.collection("posts")
-      .doc(postId)
-      .delete()
-      .then(function () {
-        console.log("Document successfully deleted!");
-      })
-      .catch(function (error) {
-        console.error("Error removing document: ", error);
-      });
+    dispatch(deletePostThunk(post));
   };
 
   useEffect(() => {
-    db.collection("myusers")
-      .where("displayName", "==", post.username)
-      .get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          setAvatar(doc.data().photoURL);
-        });
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
-      });
-  }, [post.username]);
+    dispatch(getPostAvatarThunk(post.username, post.id));
+  }, [post.postCreatorAvatar]);
 
   return (
     <div>
@@ -86,7 +65,7 @@ function CustomCard({ post, user }) {
         <CardHeader
           avatar={
             <Link to={`/user/${post.username}`}>
-              <Avatar src={avatar} />
+              <Avatar src={post.postCreatorAvatar} />
             </Link>
           }
           action={

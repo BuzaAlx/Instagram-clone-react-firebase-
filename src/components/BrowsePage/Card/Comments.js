@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { db } from "../../Firebase";
+import { db } from "../../../Firebase";
 import {
   Typography,
   Button,
@@ -19,8 +19,8 @@ import AddEmoji from "./AddEmoji";
 import {
   // getPostCommentsThunk,
   postCommentThunk,
-  deletePostThunk,
-} from "../../redux/Posts/posts.reducer";
+  deleteCommentThunk,
+} from "../../../redux/Posts/posts.reducer";
 
 const useStyles = makeStyles((theme) => ({
   commentBox: {
@@ -77,7 +77,7 @@ function Comments({ postId, user, comments }) {
   };
 
   const handleDelete = (id) => {
-    dispatch(deletePostThunk(postId, id));
+    dispatch(deleteCommentThunk(postId, id));
   };
 
   return (

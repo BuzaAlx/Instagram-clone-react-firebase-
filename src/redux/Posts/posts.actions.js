@@ -38,3 +38,13 @@ export const addLikeActionCreator = (data) => ({
   type: postsTypes.ADD_LIKE,
   payload: data,
 });
+
+export const setPostAvatarActionCreator = (data) => ({
+  type: postsTypes.SET_POST_AVATAR,
+  payload: data,
+});
+
+export const postDelectedActionCreator = (id) => ({
+  type: postsTypes.POST_WAS_DELETED,
+  payload: id,
+});

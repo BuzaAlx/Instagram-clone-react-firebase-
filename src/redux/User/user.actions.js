@@ -34,3 +34,12 @@ export const setLoadingActionCreator = (flag) => ({
   type: userTypes.SET_USER_LOADING,
   payload: flag,
 });
+
+export const setSelectedUserImgActionCreator = (imageURL) => ({
+  type: userTypes.SET_SELECTED_USER_IMAGE,
+  payload: imageURL,
+});
+
+export const resetSelectedUserDataActionCreator = () => ({
+  type: userTypes.RESET_SELECTED_USER_DATA,
+});

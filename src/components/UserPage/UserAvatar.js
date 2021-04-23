@@ -11,8 +11,11 @@ import {
 import { storage, db } from "../../Firebase";
 import PropTypes from "prop-types";
 import usePopover from "../../hooks/usePopover";
-import { useDispatch } from "react-redux";
-import { getUserAvatarThunk } from "../../redux/User/user.reducer";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  deleteImageFromStorageThunk,
+  getUserAvatarThunk,
+} from "../../redux/User/user.reducer";
 
 const useStyles = makeStyles((theme) => ({
   large: {
@@ -27,6 +30,9 @@ function UserAvatar({ userId, user }) {
   const [avatar, setAvatar] = useState("");
   const classes = useStyles();
   const dispatch = useDispatch();
+  const { selectedUserImage } = useSelector(
+    (state) => state.user.selectedUserData
+  );
 
   const handleChange = (e) => {
     if (e.target.files[0]) {
@@ -36,21 +42,10 @@ function UserAvatar({ userId, user }) {
 
   const handleUpload = () => {
     if (user.photoURL) {
-      let pictureRef = storage.refFromURL(user.photoURL);
-      pictureRef
-        .delete()
-        .then(() => {
-          console.log("picture is delete");
-        })
-        .catch((err) => {
-          console.log(err);
-          return;
-        });
+      dispatch(deleteImageFromStorageThunk(user.photoURL));
     }
-
     // first delete previous photo from storage
     const uploadTask = storage.ref(`MYusers/${image.name}`).put(image);
-
     uploadTask.on(
       "state_changed",
       (snapshot) => {},
@@ -79,18 +74,6 @@ function UserAvatar({ userId, user }) {
 
   useEffect(() => {
     dispatch(getUserAvatarThunk(userId));
-
-    db.collection("myusers")
-      .where("displayName", "==", userId)
-      .get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          setAvatar(doc.data().photoURL);
-        });
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
-      });
   }, [userId]);
 
   return (
@@ -99,7 +82,7 @@ function UserAvatar({ userId, user }) {
         className={classes.large}
         aria-describedby={id}
         onClick={handleClick}
-        src={user.displayName === userId ? user.photoURL : avatar}
+        src={user.displayName === userId ? user.photoURL : selectedUserImage}
       />
       <Popover
         id={id}

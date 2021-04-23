@@ -181,7 +181,7 @@ export const getPostsThunk = () => async (dispatch) => {
 
 export const postCommentThunk = (data) => async (dispatch) => {
   try {
-    let id = await postComment(data); //bad TODO: formate this shit, problem: cant receive data from the FB after adding
+    let id = await postComment(data); //bad TODO: formate this, problem: cant receive data from the FB after adding
     let newCommentTemplate = {
       id,
       comment: {

@@ -51,8 +51,7 @@ function BrowsePage() {
   const history = useHistory();
   const dispatch = useDispatch();
   const { currentUser: user } = useSelector((state) => state.user);
-
-  FullPageLoader;
+  const { posts } = useSelector((state) => state.posts);
 
   const handleLogout = () => {
     dispatch(signOutUserStart(history));
@@ -61,8 +60,6 @@ function BrowsePage() {
   useEffect(() => {
     dispatch(getPostsThunk());
   }, []);
-
-  const { posts } = useSelector((state) => state.posts);
 
   if (isLoadingUserReducer) {
     return <FullPageLoader text={"Welcome"} />;

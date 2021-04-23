@@ -8,9 +8,11 @@ import {
   setUserPosts,
   signInSuccess,
   signOutUserSuccess,
+  setSelectedUserImgActionCreator,
 } from "./user.actions";
 import { SIGN_IN } from "../../constants/routes";
 import newUser from "../../img/newUser.webp";
+import { deleteImgFromStorage } from "../Posts/post.helpers";
 
 export const getInitialUser = () => {
   return localStorage.getItem("authUser");
@@ -20,9 +22,11 @@ let user = getInitialUser();
 
 const INITIAL_STATE = {
   currentUser: user,
-  selectedUserPosts: [],
   userErr: [],
   isLoadingUserReducer: false,
+  selectedUserData: {
+    selectedUserPosts: [],
+  },
 };
 
 const userReducer = (state = INITIAL_STATE, action) => {
@@ -45,9 +49,14 @@ const userReducer = (state = INITIAL_STATE, action) => {
         currentUser: null,
       };
     case userTypes.SET_USER_POSTS:
+      let selectedUserData = {
+        ...state.selectedUserData,
+        selectedUserPosts: action.payload,
+      };
+
       return {
         ...state,
-        selectedUserPosts: action.payload,
+        selectedUserData,
       };
     case userTypes.ADD_POST:
       return {
@@ -58,6 +67,20 @@ const userReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         isLoadingUserReducer: action.payload,
+      };
+    case userTypes.SET_SELECTED_USER_IMAGE:
+      let selectedUserDataCopy = {
+        ...state.selectedUserData,
+        selectedUserImage: action.payload,
+      };
+      return {
+        ...state,
+        selectedUserData: selectedUserDataCopy,
+      };
+    case userTypes.RESET_SELECTED_USER_DATA:
+      return {
+        ...state,
+        selectedUserData: INITIAL_STATE.selectedUserData,
       };
     default:
       return state;
@@ -167,7 +190,15 @@ export const addNewPostThunk = (data, userId) => async (dispatch) => {
 export const getUserAvatarThunk = (userId) => async (dispatch) => {
   try {
     let avatarURL = await getAvatar(userId);
-    // TODO: закончить
+    dispatch(setSelectedUserImgActionCreator(avatarURL));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const deleteImageFromStorageThunk = (photoURL) => async (dispatch) => {
+  try {
+    await deleteImgFromStorage(photoURL);
   } catch (error) {
     console.log(error);
   }

@@ -7,6 +7,7 @@ import PropTypes from "prop-types";
 
 import { useDispatch, useSelector } from "react-redux";
 import { getUserPostsThunk } from "../../redux/User/user.reducer";
+import { resetSelectedUserDataActionCreator } from "../../redux/User/user.actions";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -31,10 +32,13 @@ function PostsList({ userId, setPostsCount }) {
   const classes = useStyles();
 
   const dispatch = useDispatch();
-  const { selectedUserPosts } = useSelector((state) => state.user);
+  const { selectedUserPosts } = useSelector(
+    (state) => state.user.selectedUserData
+  );
 
   useEffect(() => {
     dispatch(getUserPostsThunk(userId));
+    return () => dispatch(resetSelectedUserDataActionCreator());
   }, []);
 
   useEffect(() => {

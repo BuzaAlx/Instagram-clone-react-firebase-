@@ -1,18 +1,25 @@
 import { userTypes } from "./user.types";
 import handleUserProfile, { getUserPosts } from "./user.helpers";
 import { auth } from "../../Firebase";
-import { getCurrentUser, addPost, getAvatar } from "./user.helpers";
 import {
-  addPostActionCreator,
+  getCurrentUser,
+  addPost,
+  getAvatar,
+  getImageUrl,
+} from "./user.helpers";
+import {
   setLoadingActionCreator,
   setUserPosts,
   signInSuccess,
   signOutUserSuccess,
   setSelectedUserImgActionCreator,
+  setProgressActionCreator,
 } from "./user.actions";
 import { SIGN_IN } from "../../constants/routes";
 import newUser from "../../img/newUser.webp";
 import { deleteImgFromStorage } from "../Posts/post.helpers";
+import firebase from "firebase";
+import { storage } from "../../Firebase";
 
 export const getInitialUser = () => {
   return localStorage.getItem("authUser");
@@ -27,6 +34,7 @@ const INITIAL_STATE = {
   selectedUserData: {
     selectedUserPosts: [],
   },
+  postUploadProgress: 0,
 };
 
 const userReducer = (state = INITIAL_STATE, action) => {
@@ -81,6 +89,11 @@ const userReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         selectedUserData: INITIAL_STATE.selectedUserData,
+      };
+    case userTypes.SET_PROGRESS:
+      return {
+        ...state,
+        postUploadProgress: action.payload,
       };
     default:
       return state;
@@ -181,6 +194,7 @@ export const getUserPostsThunk = (userId) => async (dispatch) => {
 export const addNewPostThunk = (data, userId) => async (dispatch) => {
   try {
     await addPost(data);
+    // TODO: add new Post To Store without refetching all data
     dispatch(getUserPostsThunk(userId));
   } catch (error) {
     console.log(error);
@@ -199,6 +213,46 @@ export const getUserAvatarThunk = (userId) => async (dispatch) => {
 export const deleteImageFromStorageThunk = (photoURL) => async (dispatch) => {
   try {
     await deleteImgFromStorage(photoURL);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const uploadNewPostThunk = (image, caption, username, close) => async (
+  dispatch
+) => {
+  try {
+    const uploadTask = storage.ref(`images/${image.name}`).put(image);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress = Math.round(
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        );
+        dispatch(setProgressActionCreator(progress));
+      },
+      (error) => {
+        console.log(error);
+      },
+      async () => {
+        // complete function
+        let imageURL = await getImageUrl(image);
+        dispatch(
+          addNewPostThunk(
+            {
+              imageUrl: imageURL,
+              caption: caption,
+              username: username,
+              timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+            },
+            username
+          )
+        );
+        close();
+        dispatch(setProgressActionCreator(0));
+      }
+    );
   } catch (error) {
     console.log(error);
   }

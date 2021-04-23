@@ -1,4 +1,4 @@
-import { db, auth } from "../../Firebase";
+import { db, auth, storage } from "../../Firebase";
 
 const handleUserProfile = async ({ userAuth, additionalData = {} }) => {
   if (!userAuth) return;
@@ -97,6 +97,21 @@ export const getAvatar = (userId) => {
       })
       .catch((error) => {
         reject(error);
+      });
+  });
+};
+
+export const getImageUrl = (image) => {
+  return new Promise((resolve, reject) => {
+    storage
+      .ref("images")
+      .child(image.name)
+      .getDownloadURL()
+      .then((url) => {
+        resolve(url);
+      })
+      .catch((err) => {
+        reject(err);
       });
   });
 };

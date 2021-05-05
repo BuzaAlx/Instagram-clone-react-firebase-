@@ -12,10 +12,8 @@ import {
 } from "@material-ui/core";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import BookmarkBorderSharpIcon from "@material-ui/icons/BookmarkBorderSharp";
-import { db, storage } from "../../Firebase";
 import { Link } from "react-router-dom";
 
-import { makeStyles } from "@material-ui/core/styles";
 import Comments from "./Card/Comments";
 import LikeButton from "./Card/LikeButton";
 import moment from "moment";
@@ -24,28 +22,7 @@ import {
   getPostAvatarThunk,
   deletePostThunk,
 } from "../../redux/Posts/posts.reducer";
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    maxWidth: "600px",
-    margin: "20px auto",
-    border: "1px solid #dbdbdb",
-    borderRadius: "3px",
-  },
-  cardMedia: {
-    paddingTop: "56%",
-  },
-  CardActions: {
-    justifyContent: "space-between",
-    height: theme.spacing(6),
-    padding: 0,
-  },
-
-  cardContent: {
-    paddingTop: 0,
-    paddingBottom: 0,
-  },
-}));
+import { useStyles } from "../styles/CardStyles";
 
 function CustomCard({ post, user }) {
   const styles = useStyles();
@@ -57,7 +34,7 @@ function CustomCard({ post, user }) {
 
   useEffect(() => {
     dispatch(getPostAvatarThunk(post.username, post.id));
-  }, [post.postCreatorAvatar]);
+  }, []);
 
   return (
     <div>

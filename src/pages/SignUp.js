@@ -16,33 +16,10 @@ import { auth } from "../Firebase";
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { SignUpUserStart } from "../redux/User/user.reducer";
-
-const newUserImg =
-  "https://www.nj.com/resizer/h8MrN0-Nw5dB5FOmMVGMmfVKFJo=/450x0/smart/cloudfront-us-east-1.images.arcpublishing.com/advancelocal/SJGKVE5UNVESVCW7BBOHKQCZVE.jpg";
-
-const useStyles = makeStyles((theme) => ({
-  paper: {
-    marginTop: theme.spacing(8),
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
-  },
-  form: {
-    width: "100%",
-    marginTop: theme.spacing(3),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-}));
+import { useStyles } from "./styles/SignUpStyles";
 
 function SignUp() {
   const classes = useStyles();
-  const history = useHistory();
   const [firstName, setFirstName] = useState("");
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
@@ -55,29 +32,6 @@ function SignUp() {
     dispatch(
       SignUpUserStart({ displayName: firstName, email: emailAddress, password })
     );
-
-    // let isInvalid = password === "" || emailAddress === "";
-    // if (isInvalid) return null;
-
-    // return auth
-    //   .createUserWithEmailAndPassword(emailAddress, password)
-    //   .then(({ user }) =>
-    //     // console.log(user) getSnapshotFromUserAuth will be here !!!!!!!!!!!!!!
-    //     user
-    //       .updateProfile({
-    //         displayName: firstName,
-    //         photoURL: newUserImg,
-    //       })
-    //       .then(() => {
-    //         history.push(ROUTES.BROWSE);
-    //       })
-    //   )
-    //   .catch((error) => {
-    //     setFirstName("");
-    //     setEmailAddress("");
-    //     setPassword("");
-    //     setError(error.message);
-    //   });
   };
 
   return (

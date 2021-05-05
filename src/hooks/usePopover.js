@@ -7,7 +7,6 @@ function usePopover(userId) {
 
   const handleClick = (event) => {
     if (userId && userId !== currentUser.displayName) return;
-    // if (userId !== currentUser.displayName) return;
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {

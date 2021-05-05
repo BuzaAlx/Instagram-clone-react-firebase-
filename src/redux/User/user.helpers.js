@@ -1,4 +1,4 @@
-import { db, auth } from "../../Firebase";
+import { db, auth, storage } from "../../Firebase";
 
 const handleUserProfile = async ({ userAuth, additionalData = {} }) => {
   if (!userAuth) return;
@@ -83,8 +83,6 @@ export const addPost = (data) => {
   });
 };
 
-//TODO:при виходе из юзей пейдж очищать selectedUser posts
-
 export const getAvatar = (userId) => {
   return new Promise((resolve, reject) => {
     db.collection("myusers")
@@ -97,6 +95,21 @@ export const getAvatar = (userId) => {
       })
       .catch((error) => {
         reject(error);
+      });
+  });
+};
+
+export const getImageUrl = (ref, image) => {
+  return new Promise((resolve, reject) => {
+    storage
+      .ref(ref)
+      .child(image.name)
+      .getDownloadURL()
+      .then((url) => {
+        resolve(url);
+      })
+      .catch((err) => {
+        reject(err);
       });
   });
 };

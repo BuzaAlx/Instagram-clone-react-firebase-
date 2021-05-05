@@ -18,13 +18,6 @@ export const getPosts = () => {
   });
 };
 
-// IF YOU NEED A LISTENER USE //
-
-// .onSnapshot((snapshot) =>
-//   resolve(
-//     snapshot.docs.map((doc) => ({ id: doc.id, post: doc.data() }))
-//   )
-
 export const getLikes = (postId) => {
   return new Promise((resolve, reject) => {
     try {
@@ -139,6 +132,37 @@ export const deletePost = (id) => {
       })
       .catch(function (error) {
         reject(error);
+      });
+  });
+};
+
+export const deleteLike = (postId, found) => {
+  return new Promise((resolve, reject) => {
+    db.collection("posts")
+      .doc(postId)
+      .collection("likes")
+      .doc(found.id)
+      .delete()
+      .then(() => resolve())
+
+      .catch(function (error) {
+        reject(error);
+      });
+  });
+};
+
+export const deleteComment = (postId, id) => {
+  return new Promise((resolve, reject) => {
+    db.collection("posts")
+      .doc(postId)
+      .collection("comments")
+      .doc(id)
+      .delete()
+      .then(function () {
+        resolve("Document successfully deleted!");
+      })
+      .catch(function (e) {
+        reject("Error removing document: ", e);
       });
   });
 };

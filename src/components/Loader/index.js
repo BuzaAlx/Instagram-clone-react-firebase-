@@ -26,7 +26,6 @@ const FullPageLoader = ({ text }) => {
           </Typography>
         </div>
       )}
-      {/* <img src={Spinner} className="loader" alt="loading" /> */}
       <CircularProgress size={50} />
     </Box>
   );

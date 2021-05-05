@@ -8,6 +8,8 @@ import {
   getUserImage,
   deleteImgFromStorage,
   deletePost,
+  deleteLike,
+  deleteComment,
 } from "./post.helpers";
 import {
   setPostsActionCreator,
@@ -18,7 +20,6 @@ import {
   setPostAvatarActionCreator,
   postDelectedActionCreator,
 } from "./posts.actions";
-import { db } from "../../Firebase";
 
 const INITIAL_STATE = {
   posts: [],
@@ -49,8 +50,20 @@ const postsReducer = (state = INITIAL_STATE, action) => {
         ...state,
         posts: postsCopy,
       };
-    case postsTypes.SET_COMMENT:
-      let { newCommentTemplate } = action.payload;
+    case postsTypes.SET_COMMENT: {
+      let { id, data } = action.payload;
+
+      let newCommentTemplate = {
+        id,
+        comment: {
+          text: data.text,
+          username: data.username,
+          timestamp: {
+            nanoseconds: 0,
+            seconds: 0,
+          },
+        },
+      };
 
       postsCopy = [...state.posts];
       postIndex = postsCopy.findIndex((p) => p.id === action.payload.postId);
@@ -67,7 +80,7 @@ const postsReducer = (state = INITIAL_STATE, action) => {
         ...state,
         posts: postsCopy,
       };
-
+    }
     case postsTypes.DELETE_COMMENT:
       let { postId, id } = action.payload;
 
@@ -102,7 +115,12 @@ const postsReducer = (state = INITIAL_STATE, action) => {
       };
     }
     case postsTypes.ADD_LIKE: {
-      let { postId, obj } = action.payload;
+      let { postId, id, username } = action.payload;
+
+      let likeTemplate = {
+        username,
+        id,
+      };
 
       postsCopy = [...state.posts];
       postIndex = postsCopy.findIndex((p) => p.id === postId);
@@ -110,7 +128,7 @@ const postsReducer = (state = INITIAL_STATE, action) => {
 
       postsCopy[postIndex] = {
         ...postsCopy[postIndex],
-        likes: [...likesCopy, obj],
+        likes: [...likesCopy, likeTemplate],
       };
 
       return {
@@ -164,14 +182,13 @@ export default postsReducer;
 export const getPostsThunk = () => async (dispatch) => {
   try {
     const posts = await getPosts();
-
-    let postsWithComments = posts.map(async (post) => {
-      let comments = await getComments(post.id);
-      let likes = await getLikes(post.id);
-      return { ...post, comments, likes };
-    });
-
-    Promise.all(postsWithComments).then((posts) => {
+    Promise.all(
+      posts.map(async (post) => {
+        let comments = await getComments(post.id);
+        let likes = await getLikes(post.id);
+        return { ...post, comments, likes };
+      })
+    ).then((posts) => {
       dispatch(setPostsActionCreator(posts));
     });
   } catch (error) {
@@ -181,21 +198,8 @@ export const getPostsThunk = () => async (dispatch) => {
 
 export const postCommentThunk = (data) => async (dispatch) => {
   try {
-    let id = await postComment(data); //bad TODO: formate this, problem: cant receive data from the FB after adding
-    let newCommentTemplate = {
-      id,
-      comment: {
-        text: data.text,
-        username: data.username,
-        timestamp: {
-          nanoseconds: 0,
-          seconds: 0,
-        },
-      },
-    };
-    dispatch(
-      setCommentActionCreator({ newCommentTemplate, postId: data.postId })
-    );
+    let id = await postComment(data);
+    dispatch(setCommentActionCreator({ id, data, postId: data.postId }));
   } catch (error) {
     console.log(error);
   }
@@ -203,17 +207,7 @@ export const postCommentThunk = (data) => async (dispatch) => {
 
 export const deleteCommentThunk = (postId, id) => async (dispatch) => {
   try {
-    db.collection("posts")
-      .doc(postId)
-      .collection("comments")
-      .doc(id)
-      .delete()
-      .then(function () {
-        console.log("Document successfully deleted!");
-      })
-      .catch(function (e) {
-        console.error("Error removing document: ", e);
-      });
+    await deleteComment(postId, id);
     dispatch(deleteCommentActionCreator({ postId, id }));
   } catch (error) {
     console.log(error);
@@ -222,12 +216,7 @@ export const deleteCommentThunk = (postId, id) => async (dispatch) => {
 
 export const deleteLikeThunk = (postId, found) => async (dispatch) => {
   try {
-    db.collection("posts")
-      .doc(postId)
-      .collection("likes")
-      .doc(found.id)
-      .delete();
-
+    await deleteLike(postId, found);
     dispatch(deleteLikeActionCreator({ postId, likeId: found.id }));
   } catch (error) {
     console.log(error);
@@ -237,12 +226,7 @@ export const deleteLikeThunk = (postId, found) => async (dispatch) => {
 export const addLikeThunk = (postId, username) => async (dispatch) => {
   try {
     let id = await addLike({ postId, username });
-    let obj = {
-      username,
-      id,
-    };
-
-    dispatch(addLikeActionCreator({ postId, obj }));
+    dispatch(addLikeActionCreator({ postId, id, username }));
   } catch (error) {
     console.log(error);
   }

@@ -43,3 +43,13 @@ export const setSelectedUserImgActionCreator = (imageURL) => ({
 export const resetSelectedUserDataActionCreator = () => ({
   type: userTypes.RESET_SELECTED_USER_DATA,
 });
+
+export const setProgressActionCreator = (progress) => ({
+  type: userTypes.SET_PROGRESS,
+  payload: progress,
+});
+
+export const setNewUserAvatarActionCreator = (imageURL) => ({
+  type: userTypes.SET_USER_AVATAR,
+  payload: imageURL,
+});

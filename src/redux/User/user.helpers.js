@@ -83,8 +83,6 @@ export const addPost = (data) => {
   });
 };
 
-//TODO:при виходе из юзей пейдж очищать selectedUser posts
-
 export const getAvatar = (userId) => {
   return new Promise((resolve, reject) => {
     db.collection("myusers")
@@ -101,10 +99,10 @@ export const getAvatar = (userId) => {
   });
 };
 
-export const getImageUrl = (image) => {
+export const getImageUrl = (ref, image) => {
   return new Promise((resolve, reject) => {
     storage
-      .ref("images")
+      .ref(ref)
       .child(image.name)
       .getDownloadURL()
       .then((url) => {

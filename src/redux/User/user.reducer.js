@@ -14,12 +14,13 @@ import {
   signOutUserSuccess,
   setSelectedUserImgActionCreator,
   setProgressActionCreator,
+  setNewUserAvatarActionCreator,
 } from "./user.actions";
 import { SIGN_IN } from "../../constants/routes";
-import newUser from "../../img/newUser.webp";
+import newUser from "../../resources/images/newUser.webp";
 import { deleteImgFromStorage } from "../Posts/post.helpers";
 import firebase from "firebase";
-import { storage } from "../../Firebase";
+import { storage, db } from "../../Firebase";
 
 export const getInitialUser = () => {
   return localStorage.getItem("authUser");
@@ -94,6 +95,13 @@ const userReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         postUploadProgress: action.payload,
+      };
+    case userTypes.SET_USER_AVATAR:
+      let currentUserCopy = { ...state.currentUser };
+      currentUserCopy.photoURL = action.payload;
+      return {
+        ...state,
+        currentUser: currentUserCopy,
       };
     default:
       return state;
@@ -194,7 +202,6 @@ export const getUserPostsThunk = (userId) => async (dispatch) => {
 export const addNewPostThunk = (data, userId) => async (dispatch) => {
   try {
     await addPost(data);
-    // TODO: add new Post To Store without refetching all data
     dispatch(getUserPostsThunk(userId));
   } catch (error) {
     console.log(error);
@@ -237,7 +244,7 @@ export const uploadNewPostThunk = (image, caption, username, close) => async (
       },
       async () => {
         // complete function
-        let imageURL = await getImageUrl(image);
+        let imageURL = await getImageUrl("images", image);
         dispatch(
           addNewPostThunk(
             {
@@ -251,6 +258,39 @@ export const uploadNewPostThunk = (image, caption, username, close) => async (
         );
         close();
         dispatch(setProgressActionCreator(0));
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const uploadNewAvatarThunk = (image, user, handleClose) => async (
+  dispatch
+) => {
+  try {
+    if (user.photoURL) {
+      dispatch(deleteImageFromStorageThunk(user.photoURL));
+    }
+    const uploadTask = storage.ref(`MYusers/${image.name}`).put(image);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {},
+      (error) => {
+        console.log(error);
+      },
+      async () => {
+        let imageURL = await getImageUrl("MYusers", image);
+
+        db.collection("myusers").doc(user.id).set(
+          {
+            photoURL: imageURL,
+          },
+          { merge: true }
+        );
+        dispatch(getUserAvatarThunk(user.displayName));
+        dispatch(setNewUserAvatarActionCreator(imageURL));
+        handleClose();
       }
     );
   } catch (error) {

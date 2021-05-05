@@ -48,3 +48,8 @@ export const setProgressActionCreator = (progress) => ({
   type: userTypes.SET_PROGRESS,
   payload: progress,
 });
+
+export const setNewUserAvatarActionCreator = (imageURL) => ({
+  type: userTypes.SET_USER_AVATAR,
+  payload: imageURL,
+});

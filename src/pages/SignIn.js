@@ -11,31 +11,10 @@ import {
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { useHistory } from "react-router-dom";
-import { auth } from "../Firebase";
-import * as ROUTES from "../constants/routes";
 
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { SignInStart } from "../redux/User/user.reducer";
-
-const useStyles = makeStyles((theme) => ({
-  paper: {
-    marginTop: theme.spacing(8),
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
-  },
-  form: {
-    width: "100%",
-    marginTop: theme.spacing(1),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-}));
+import { useStyles } from "./styles/SignInStyles";
 
 function SignIn() {
   const [emailAddress, setEmailAddress] = useState("");
@@ -44,7 +23,6 @@ function SignIn() {
   const dispatch = useDispatch();
 
   const classes = useStyles();
-  const history = useHistory();
 
   const handleSignin = (e) => {
     e.preventDefault();

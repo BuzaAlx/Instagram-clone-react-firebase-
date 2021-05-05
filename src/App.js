@@ -3,7 +3,6 @@ import React, { useEffect } from "react";
 import { BrowsePage, SignIn, SignUp, UserPage } from "./pages";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import * as ROUTES from "./constants/routes";
-import useAuthListener from "./hooks/use-auth-listener";
 
 import { ProtectedRoute, IsUserRedirect } from "./utils/routes";
 import { useSelector, useDispatch } from "react-redux";

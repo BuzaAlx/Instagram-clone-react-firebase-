@@ -18,32 +18,8 @@ import { getPostsThunk } from "../redux/Posts/posts.reducer";
 
 import FullPageLoader from "../components/Loader";
 import Logo from "../resources/images/Logo.png";
-
-const useStyles = makeStyles((theme) => ({
-  header: {
-    paddingBottom: 5,
-    paddingTop: 5,
-    borderBottom: `1px solid ${theme.palette.divider}`,
-    alignItems: "center",
-    position: "sticky ",
-    top: 0,
-    background: "white",
-    zIndex: "1",
-    height: "55px",
-  },
-  box: {
-    justifyContent: "flex-end",
-    display: "flex",
-    flexGrow: 1,
-    alignItems: "center",
-    gap: 10,
-  },
-  userName: {
-    [theme.breakpoints.down("sm")]: {
-      display: "none",
-    },
-  },
-}));
+import { resetDataActionCreator } from "../redux/Posts/posts.actions";
+import { useStyles } from "./styles/BrowsePageStyles";
 
 function BrowsePage() {
   const { isLoadingUserReducer } = useSelector((state) => state.user);
@@ -59,6 +35,7 @@ function BrowsePage() {
 
   useEffect(() => {
     dispatch(getPostsThunk());
+    return () => dispatch(resetDataActionCreator());
   }, []);
 
   if (isLoadingUserReducer) {
